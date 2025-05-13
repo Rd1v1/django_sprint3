@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Category, Location, Post
 
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = (
@@ -14,6 +15,7 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('title', 'slug')
     prepopulated_fields = {'slug': ('title',)}
 
+
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = (
@@ -23,6 +25,7 @@ class LocationAdmin(admin.ModelAdmin):
     )
     list_editable = ('is_published',)
     search_fields = ('name',)
+
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -40,3 +43,4 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ('title', 'text', 'author__username')
     list_filter = ('category', 'location', 'author')
     date_hierarchy = 'pub_date'
+    

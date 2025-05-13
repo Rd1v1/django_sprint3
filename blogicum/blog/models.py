@@ -2,7 +2,9 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
+
 User = get_user_model()
+
 
 class Category(models.Model):
     title = models.CharField(
@@ -32,6 +34,7 @@ class Category(models.Model):
         verbose_name = _('категория')
         verbose_name_plural = _('Категории')
 
+
 class Location(models.Model):
     name = models.CharField(
         _('Название места'),
@@ -49,6 +52,7 @@ class Location(models.Model):
     class Meta:
         verbose_name = _('местоположение')
         verbose_name_plural = _('Местоположения')
+
 
 class Post(models.Model):
     title = models.CharField(
