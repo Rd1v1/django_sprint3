@@ -4,43 +4,58 @@ from .models import Category, Location, Post
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = (
-        'title', 
-        'description', 
-        'slug', 
-        'is_published', 
-        'created_at'
-    )
-    list_editable = ('is_published',)
-    search_fields = ('title', 'slug')
+    list_display = ('title', 'is_published', 'slug', 'created_at')
     prepopulated_fields = {'slug': ('title',)}
+    search_fields = ('title',)
+    list_filter = ('is_published',)
+    fieldsets = (
+        (None, {
+            'fields': (
+                'title',
+                'description',
+                'slug',
+                'is_published'
+            )
+        }),
+    )
 
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = (
-        'name', 
-        'is_published', 
-        'created_at'
-    )
-    list_editable = ('is_published',)
+    list_display = ('name', 'is_published', 'created_at')
     search_fields = ('name',)
+    list_filter = ('is_published',)
 
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = (
         'title',
-        'text',
-        'pub_date',
         'author',
-        'location',
-        'category',
+        'pub_date',
         'is_published',
-        'created_at'
+        'category',
+        'location'
     )
-    list_editable = ('is_published',)
-    search_fields = ('title', 'text', 'author__username')
-    list_filter = ('category', 'location', 'author')
+    search_fields = ('title', 'text')
+    list_filter = ('is_published', 'category', 'location')
+    raw_id_fields = ('author',)
     date_hierarchy = 'pub_date'
-    
+    fieldsets = (
+        (None, {
+            'fields': (
+                'title',
+                'text',
+                'pub_date',
+                'author',
+                'category',
+                'location',
+                'is_published'
+            )
+        }),
+    )
+
+
+admin.site.site_header = 'Блог'
+admin.site.index_title = 'Блог'
+admin.site.site_title = 'Блог'

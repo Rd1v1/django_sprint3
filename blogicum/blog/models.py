@@ -1,99 +1,103 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
-
 
 User = get_user_model()
 
 
-class Category(models.Model):
-    title = models.CharField(
-        _('Заголовок'),
-        max_length=256
+class PublishedModel(models.Model):
+    is_published = models.BooleanField(
+        default=True,
+        verbose_name='Опубликовано',
+        help_text='Снимите галочку, чтобы скрыть публикацию.'
     )
-    description = models.TextField(_('Описание'))
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Добавлено'
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Category(PublishedModel):
+    title = models.CharField(
+        max_length=256,
+        verbose_name='Заголовок'
+    )
+    description = models.TextField(
+        verbose_name='Описание'
+    )
     slug = models.SlugField(
-        _('Идентификатор'),
         unique=True,
-        help_text=_(
-            'Идентификатор страницы для URL; '
-            'разрешены символы латиницы, цифры, дефис и подчёркивание.'
+        verbose_name='Идентификатор',
+        help_text=(
+            'Идентификатор страницы для URL; разрешены символы латиницы, '
+            'цифры, дефис и подчёркивание.'
         )
     )
-    is_published = models.BooleanField(
-        _('Опубликовано'),
-        default=True,
-        help_text=_('Снимите галочку, чтобы скрыть публикацию.')
-    )
-    created_at = models.DateTimeField(
-        _('Добавлено'),
-        auto_now_add=True
-    )
 
     class Meta:
-        verbose_name = _('категория')
-        verbose_name_plural = _('Категории')
+        verbose_name = 'категория'
+        verbose_name_plural = 'Категории'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title
 
 
-class Location(models.Model):
+class Location(PublishedModel):
     name = models.CharField(
-        _('Название места'),
-        max_length=256
-    )
-    is_published = models.BooleanField(
-        _('Опубликовано'),
-        default=True
-    )
-    created_at = models.DateTimeField(
-        _('Добавлено'),
-        auto_now_add=True
+        max_length=256,
+        verbose_name='Название места'
     )
 
     class Meta:
-        verbose_name = _('местоположение')
-        verbose_name_plural = _('Местоположения')
+        verbose_name = 'местоположение'
+        verbose_name_plural = 'Местоположения'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.name
 
 
-class Post(models.Model):
+class Post(PublishedModel):
     title = models.CharField(
-        _('Заголовок'),
-        max_length=256
+        max_length=256,
+        verbose_name='Заголовок'
     )
-    text = models.TextField(_('Текст'))
+    text = models.TextField(
+        verbose_name='Текст'
+    )
     pub_date = models.DateTimeField(
-        _('Дата и время публикации'),
-        help_text=_(
-            'Если установить дату и время в будущем — '
-            'можно делать отложенные публикации.'
+        verbose_name='Дата и время публикации',
+        help_text=(
+            'Если установить дату и время в будущем — можно делать '
+            'отложенные публикации.'
         )
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name=_('Автор публикации')
+        verbose_name='Автор публикации'
     )
     location = models.ForeignKey(
         Location,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name=_('Местоположение')
+        verbose_name='Местоположение'
     )
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
         null=True,
-        verbose_name=_('Категория')
-    )
-    is_published = models.BooleanField(
-        _('Опубликовано'),
-        default=True
-    )
-    created_at = models.DateTimeField(
-        _('Добавлено'),
-        auto_now_add=True
+        verbose_name='Категория'
     )
 
     class Meta:
-        verbose_name = _('публикация')
-        verbose_name_plural = _('Публикации')
+        verbose_name = 'публикация'
+        verbose_name_plural = 'Публикации'
+        ordering = ['-pub_date']
+
+    def __str__(self):
+        return self.title
